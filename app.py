@@ -104,35 +104,20 @@ def inject_css():
             margin-bottom:1rem;
         }
         .flow-row {
-            display:flex;
-            gap:14px;
-            align-items:stretch;
-            margin-bottom:12px;
-        }
-        .step-tag {
-            min-width:118px;
-            max-width:118px;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            border-radius:14px 0 0 14px;
-            color:#ffffff;
-            font-weight:800;
-            font-size:1.05rem;
-            letter-spacing:0.3px;
-            padding:0.8rem 0.7rem;
+            display:block;
+            margin-bottom:0;
         }
         .flow-card {
-            flex:1;
             background:#ffffff;
             border:1px solid #eadfdf;
-            border-radius:0 14px 14px 0;
-            padding:0.9rem 1rem;
+            border-left:6px solid var(--flow-accent, #b19898);
+            border-radius:14px;
+            padding:0.95rem 1rem;
         }
         .flow-title {
             font-size:1.02rem;
             font-weight:800;
-            margin-bottom:0.25rem;
+            margin-bottom:0.3rem;
             color:#251b1d;
         }
         .flow-desc {
@@ -140,7 +125,13 @@ def inject_css():
             line-height:1.62;
             color:#59545a;
         }
-        .flow-row:last-child {margin-bottom:0;}
+        .flow-arrow {
+            text-align:center;
+            color:#a58f93;
+            font-size:1.55rem;
+            line-height:1.2;
+            padding:0.35rem 0;
+        }
         .state-note {
             margin-top:0.9rem;
             background:#fff8df;
@@ -176,9 +167,6 @@ def inject_css():
         .schema-title {font-weight:800; color:#2a2325; margin-bottom:0.3rem;}
         .schema-meta {color:#625d66; line-height:1.6; font-size:0.93rem;}
         @media (max-width: 900px) {
-            .flow-row {flex-direction:column; gap:6px;}
-            .step-tag {max-width:100%; min-width:100%; border-radius:14px 14px 0 0;}
-            .flow-card {border-radius:0 0 14px 14px;}
             .compare-grid {grid-template-columns: 1fr;}
         }
         </style>
@@ -192,22 +180,23 @@ def render_section(title, desc):
     st.markdown(f'<div class="section-desc">{desc}</div>', unsafe_allow_html=True)
 
 
-def render_flow_diagram(title, subtitle, layers, accent, note=None):
+def render_flow_diagram(title, subtitle, items, accent, note=None):
     html = [
         '<div class="diagram-wrap">',
         f'<div class="diagram-head">{title}</div>',
         f'<div class="diagram-sub">{subtitle}</div>',
     ]
-    for tag, name, desc in layers:
+    for index, (name, desc) in enumerate(items):
         html.append(
-            f'''<div class="flow-row">
-                    <div class="step-tag" style="background:{accent};">{tag}</div>
-                    <div class="flow-card">
+            f"""<div class="flow-row">
+                    <div class="flow-card" style="border-left-color:{accent};">
                         <div class="flow-title">{name}</div>
                         <div class="flow-desc">{desc}</div>
                     </div>
-                </div>'''
+                </div>"""
         )
+        if index < len(items) - 1:
+            html.append('<div class="flow-arrow">↓</div>')
     if note:
         html.append(f'<div class="state-note">{note}</div>')
     html.append('</div>')
@@ -253,11 +242,12 @@ with viz_tab:
         "구조적으로 어떻게 다른지 비교해 보고자 했다.",
     )
 
-    st.info(
-        "**핵심 질문**  \\n"
-        "웹 애플리케이션의 데이터는 어떤 구조로 저장되며, "
-        "브라우저 기반 저장 방식과 관계형 데이터베이스는 어떻게 다르게 데이터를 관리하는가?"
-    )
+    with st.container(border=True):
+        st.markdown("**핵심 질문**")
+        st.markdown(
+            "웹 애플리케이션의 데이터는 어떤 구조로 저장되며, "
+            "브라우저 기반 저장 방식과 관계형 데이터베이스는 어떻게 다르게 데이터를 관리하는가?"
+        )
 
     col1, col2 = st.columns(2, gap="large")
 
@@ -266,10 +256,10 @@ with viz_tab:
             "기존 PROJECT : LOGIC의 저장 방식",
             "게임 진행 데이터는 JavaScript의 localStorage에 저장하고, Streamlit 페이지 흐름은 별도로 관리하는 구조",
             [
-                ("단계 01", "게임 화면", "플레이어 이동, 타이머, 퍼즐 진행, 인벤토리 변화 발생"),
-                ("단계 02", "JavaScript 상태 객체", "playerX, playerY, seconds, inventory 등 여러 값을 하나의 객체로 정리"),
-                ("단계 03", "JSON 문자열", "JSON.stringify()로 객체를 문자열로 직렬화"),
-                ("단계 04", "브라우저 localStorage", "키와 값 형태로 저장. 같은 브라우저에서 다시 읽어 복원"),
+                ("게임 화면", "플레이어 이동, 타이머, 퍼즐 진행, 인벤토리 변화 발생"),
+                ("JavaScript 상태 객체", "playerX, playerY, seconds, inventory 등 여러 값을 하나의 객체로 정리"),
+                ("JSON 문자열", "JSON.stringify()로 객체를 문자열로 직렬화"),
+                ("브라우저 localStorage", "키와 값 형태로 저장. 같은 브라우저에서 다시 읽어 복원"),
             ],
             accent="#b19898",
             note=(
@@ -292,11 +282,11 @@ with viz_tab:
             "SQLite를 이용한 저장 방식",
             "사용자 입력값이 Python과 sqlite3를 거쳐 records.db 파일 내부의 records 테이블에 저장되는 구조",
             [
-                ("단계 01", "Streamlit 입력 화면", "사용자가 제목과 내용을 입력"),
-                ("단계 02", "Python 처리 함수", "app.py에서 입력값 검증 후 데이터베이스 연결"),
-                ("단계 03", "SQL 명령 실행", "INSERT, SELECT, UPDATE, DELETE 명령 수행"),
-                ("단계 04", "records 테이블", "열(Column)과 행(Row)의 구조로 실제 데이터 저장"),
-                ("단계 05", "records.db 파일", "SQLite 데이터베이스 파일. 앱 재실행 후에도 데이터 유지"),
+                ("Streamlit 입력 화면", "사용자가 제목과 내용을 입력"),
+                ("Python 처리 함수", "app.py에서 입력값 검증 후 데이터베이스 연결"),
+                ("SQL 명령 실행", "INSERT, SELECT, UPDATE, DELETE 명령 수행"),
+                ("records 테이블", "열(Column)과 행(Row)의 구조로 실제 데이터 저장"),
+                ("records.db 파일", "SQLite 데이터베이스 파일. 앱 재실행 후에도 데이터 유지"),
             ],
             accent="#8a7a80",
         )
