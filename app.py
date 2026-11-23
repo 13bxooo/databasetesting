@@ -112,14 +112,14 @@ st.set_page_config(
 st.title("웹 애플리케이션의 데이터 저장 방식 탐구")
 st.write(
     "PROJECT : LOGIC에서 사용한 브라우저 저장 방식과 "
-    "별도로 구현한 SQLite 데이터베이스의 저장 구조를 시각적으로 비교합니다."
+    "별도로 구현한 SQLite 데이터베이스의 저장 구조를 시각적으로 비교함."
 )
 st.caption("Python · Streamlit · JavaScript localStorage · SQLite")
 
 st.info(
     "핵심 구분: 기존 게임은 상세 진행 정보를 브라우저 localStorage에 JSON 형태로 저장했고, "
-    "Streamlit의 st.session_state는 페이지·세션 상태를 관리했습니다. "
-    "이번 실험은 SQLite 파일에 데이터를 테이블 형태로 저장합니다."
+    "Streamlit의 st.session_state는 페이지·세션 상태를 관리함. "
+    "→이번 실험은 SQLite 파일에 데이터를 테이블 형태로 저장"
 )
 
 visual_tab, crud_tab, structure_tab = st.tabs(
@@ -129,7 +129,7 @@ visual_tab, crud_tab, structure_tab = st.tabs(
 with visual_tab:
     st.subheader("① 기존 PROJECT : LOGIC의 저장 방식")
     st.write(
-        "게임의 상세 진행 정보와 Streamlit의 페이지 상태는 서로 다른 역할을 맡았습니다."
+        "게임의 상세 진행 정보와 Streamlit의 페이지 상태는 서로 다른 역할을 맡았다."
     )
 
     left, right = st.columns(2, gap="large")
@@ -150,7 +150,7 @@ with visual_tab:
             'key: "project_logic_stage01_save_v1"',
         )
         st.caption(
-            "저장된 값은 같은 브라우저 저장 공간에서 다시 읽어 JSON.parse()로 객체로 복원합니다."
+            "저장된 값은 같은 브라우저 저장 공간에서 다시 읽어 JSON.parse()로 객체로 복원하는 역할을 한다."
         )
         st.code(
             'const saved = JSON.parse(\n'
@@ -174,13 +174,13 @@ with visual_tab:
             'st.session_state.game_started',
         )
         st.warning(
-            "st.session_state는 SQLite 같은 데이터베이스가 아닙니다. "
-            "게임의 상세 진행 데이터를 저장한 localStorage와 역할이 달랐습니다."
+            "st.session_state는 SQLite 같은 데이터베이스가 X "
+            "게임의 상세 진행 데이터를 저장한 localStorage와 역할에 차이를 보임."
         )
 
     st.divider()
     st.subheader("② 이번에 새로 구현한 SQLite 저장 방식")
-    st.write("이번 실험에서는 웹앱의 입력값을 Python이 받아 SQL 명령으로 SQLite 파일에 기록합니다.")
+    st.write("이번 실험에서는 웹앱의 입력값을 Python이 받아 SQL 명령으로 SQLite 파일에 기록한다.")
 
     sqlite_left, sqlite_right = st.columns([1, 1], gap="large")
 
@@ -215,7 +215,7 @@ with visual_tab:
         with field_cols[1]:
             info_card("content · TEXT", "기록 내용")
             info_card("created_at · TEXT", "저장 시각")
-        st.caption("열(Column)은 데이터의 항목을 정의하고, 행(Row)은 실제 기록 한 건을 나타냅니다.")
+        st.caption("열(Column)은 데이터의 항목을 정의하고, 행(Row)은 실제 기록 한 건을 나타낸다.")
 
     st.divider()
     st.subheader("③ 두 방식에서 데이터가 관리되는 모습")
@@ -272,15 +272,15 @@ with visual_tab:
         )
 
     st.caption(
-        "참고: 두 방식은 서로 대체 관계라고 단정할 수 없습니다. "
-        "데이터의 형태와 사용 목적에 따라 적합한 저장 방식을 선택합니다."
+        "참고: 두 방식은 서로 대체 관계라고 단정 불가 "
+        "-데이터의 형태와 사용 목적에 따라 적합한 저장 방식을 선택함."
     )
 
 with crud_tab:
     st.subheader("SQLite 데이터 직접 저장·관리")
     st.write(
         "아래에서 입력한 내용은 브라우저 화면 상태가 아니라 "
-        "`records.db` 파일의 `records` 테이블에 저장됩니다."
+        "`records.db` 파일의 `records` 테이블에 저장됨"
     )
 
     save_col, list_col = st.columns([1, 1], gap="large")
@@ -375,7 +375,7 @@ with crud_tab:
 with structure_tab:
     st.subheader("SQLite 데이터베이스 내부 구조")
     st.write(
-        "SQLite가 관리하는 테이블 정의와 실제 저장된 행을 각각 시각적으로 확인합니다."
+        "SQLite가 관리하는 테이블 정의와 실제 저장된 행을 각각 시각적으로 확인"
     )
 
     st.markdown("#### 1. 데이터베이스 파일")
@@ -390,7 +390,7 @@ with structure_tab:
         info_card(
             "records 테이블",
             "데이터베이스 파일 안에 생성된 테이블. "
-            "각 열의 정의에 따라 여러 기록(Row)을 저장합니다.",
+            "각 열의 정의에 따라 여러 기록(Row)을 저장한다.",
         )
 
     st.markdown("#### 2. 테이블을 구성하는 열(Column)")
@@ -428,11 +428,11 @@ with structure_tab:
     st.code("PRAGMA table_info(records);", language="sql")
     st.caption(
         "PRAGMA table_info는 테이블의 열 이름, 자료형, 기본값, "
-        "NOT NULL 및 기본 키 여부 등을 확인하는 SQLite 명령입니다."
+        "NOT NULL 및 기본 키 여부 등을 확인하는 SQLite 명령이다."
     )
 
 st.divider()
 st.caption(
-    "이 프로그램은 로컬 환경에서 SQLite의 파일 기반 저장 구조를 확인하기 위한 실험용 웹앱입니다. "
-    "records.db 파일을 삭제하면 그 안의 기록도 함께 삭제됩니다."
+    "이 프로그램은 로컬 환경에서 SQLite의 파일 기반 저장 구조를 확인하기 위한 실험용 웹앱이며, "
+    "records.db 파일을 삭제하면 그 안의 기록도 함께 삭제됨."
 )
