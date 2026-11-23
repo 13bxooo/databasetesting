@@ -8,17 +8,22 @@ if not db_path.exists():
     raise SystemExit(0)
 
 with sqlite3.connect(db_path) as conn:
+    structure = conn.execute("PRAGMA table_info(records)").fetchall()
     rows = conn.execute(
         "SELECT id, title, content, created_at FROM records ORDER BY id"
     ).fetchall()
 
-print(f"데이터베이스 파일: {db_path.name}")
-print(f"저장된 기록 수: {len(rows)}")
+print("=== records 테이블 구조 ===")
+for column in structure:
+    print(
+        f"열 이름: {column[1]}, 자료형: {column[2]}, "
+        f"NOT NULL: {column[3]}, 기본값: {column[4]}, 기본 키: {column[5]}"
+    )
 
+print(f"\n=== 저장된 데이터: {len(rows)}개 ===")
 for row in rows:
-    record_id, title, content, created_at = row
     print("-" * 40)
-    print(f"ID: {record_id}")
-    print(f"제목: {title}")
-    print(f"내용: {content}")
-    print(f"저장 시각: {created_at}")
+    print(f"ID: {row[0]}")
+    print(f"제목: {row[1]}")
+    print(f"내용: {row[2]}")
+    print(f"저장 시각: {row[3]}")
